@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Form, Modal, Jumbotron } from 'react-bootstrap';
+import { Button, Form, Modal } from 'react-bootstrap';
 import { navigate, A } from 'hookrouter';
 import Tarefa from '../models/tarefa.model';
 
