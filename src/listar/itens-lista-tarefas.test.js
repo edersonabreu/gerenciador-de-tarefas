@@ -1,27 +1,47 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit } from '@fortawesome/free-solid-svg-icons';
-import { A } from 'hookrouter';
+import ReactDOM from 'react';
+import ItensListaTarefas from './itens-lista-tarefas';
+import Tarefa from '../models/tarefa.model';
+import { render, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
 
-function ItensListaTarefas(props){
-    return (
-        props.tarefas.map(tarefa => 
-            <tr key={tarefa.id} data-testid="tarefa">
-                <td width="75%" 
-                    data-testid="nome-tarefa">
-                    {tarefa.nome}
+describe('teste do componente que exibe um item da listagem de tarefas', () => {
+    
+    const nomeTarefa = 'Tarefa'; 
+    const tarefa = new Tarefa(1, nomeTarefa, false);
+    const tarefaConcluida = new Tarefa(2, nomeTarefa, true);
+    
+    it('deve renderizar o componente sem erros', () => {
+        const div = document.createElement('div');
+        ReactDOM.render(
+            <ItensListaTarefas 
+                tarefas={[]}
+                recarregarTarefas={() => false} />, div);
 
-                </td>
-            </tr>
-        )
-    );
-}
+        ReactDOM.unmountComponentAtNode(div);
+    });
 
-ItensListaTarefas.propTypes = {
-    tarefas: PropTypes.array.isRequired,
-    recarregarTarefas: PropTypes.func.isRequired
+    it('deve exibir a tarefa', () => {
+        const { getByTestId } = render(
+            <table>
+                <tbody>
+                    <ItensListaTarefas tarefa={[tarefa]}
+                        recarregarTarefas={() => false} />
+                </tbody>
+            </table>
+        );
+        expect(getByTestId('tarefa')).toHaveTextContent(nomeTarefa);
+    });
 
-};
-
-export default ItensListaTarefas;
+    it('deve exibir uma tarefa concluída', () => {
+        const { getByTestId } = render(
+            <table>
+                <tbody>
+                    <ItensListaTarefas tarefa={[tarefaConcluida]}
+                        recarregarTarefas={() => false} />
+                </tbody>
+            </table>
+        );
+        expect(getByTestId('nome-tarefa')).toHaveStyle('text-decoration: line-through')
+    });
+});
